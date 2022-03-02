@@ -45,9 +45,10 @@ router.delete('/admin/categories', (req, res) => {
     }
 })
 
-router.get('/admin/categories/edit/:id', (req, res) => {
+router.get('/admin/categories/:id', (req, res) => {
     var id = req.params.id;
-    if (isNaN(id)) {
+    console.log(id);
+    if (!isNaN(id)) {
         Category.findByPk(id).then((categories) => {
             res.send(categories);
         })
@@ -60,7 +61,7 @@ router.put('/categories/update', (req, res) => {
     var id = req.body.id;
     var title = req.body.title;
 
-    Category.update({ title: title },
+    Category.update({ title: title, slug: slugify(title) },
         { where: { id: id } }).then(() => {
             res.sendStatus(200);
         })
