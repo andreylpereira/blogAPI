@@ -1,8 +1,16 @@
 const express = require('express');
 const app = express();
-const port = 8080
+const port = 8080;
 const bodyParser = require('body-parser');
-const connection = require('./database/database')
+const connection = require('./database/database');
+
+//import controlls
+const categoriesController = require('./categories/CategoriesController');
+const articlesController = require('./articles/ArticlesController');
+
+//import models
+const Article = require('./articles/Article');
+const Category = require('./categories/Category');
 
 //body-parser
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -16,7 +24,8 @@ connection.authenticate()
     console.log(err);
 })
 
-
+app.use("/", categoriesController);
+app.use("/", articlesController);
 
 app.get('/', (req, res) => res.send('Hello World!'))
 app.listen(port, () => console.log(`Servidor online na porta: ${port}`))
