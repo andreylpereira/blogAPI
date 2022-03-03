@@ -33,10 +33,10 @@ app.get('/:slug', (req, res) => {
         where: { slug: slug }
     }).then((article) => {
         if (article !== undefined) {
-            res.send(article);
+            res.status(200).send(article);
 
         } else {
-            console.log("Não foi possível");
+            res.sendStatus(400);
 
         }
     })

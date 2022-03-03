@@ -5,72 +5,104 @@ const Article = require('./Article');
 const slugify = require('slugify');
 
 router.get('/articles', (req, res) => {
-    Article.findAll({
-        order: [
-            ['id', 'DESC']
-        ],
-        include: [{ model: Category }]
-    }).then(articles => {
-        { articles: articles }
-        res.send(articles);
-    })
+    try {
+        Article.findAll({
+            order: [
+                ['id', 'DESC']
+            ],
+            include: [{ model: Category }]
+        }).then(articles => {
+            { articles: articles }
+            res.status(200).send(articles);
+        })
+    } catch (error) {
+        res.send({
+            status: 404,
+            error: 'Error',
+            message: 'Error ao carregar os artigos!'
+        })
+    }
 })
-
-router.get('/admin/articles/new', (req, res) => {
-    Category.findAll().then(categories => {
-        res.send(categories);
-    })
-});
 
 router.post('/articles/save', (req, res) => {
     var title = req.body.title;
     var body = req.body.body;
     var category = req.body.category;
-    console.log(category);
 
-    Article.create({
-        title: title,
-        slug: slugify(title),
-        body: body,
-        categoryId: category
-    }).then(() => {
-        res.sendStatus(200);
-    })
+    try {
+        Article.create({
+            title: title,
+            slug: slugify(title),
+            body: body,
+            categoryId: category
+        }).then(() => {
+            res.status(204).send({});
+        })
+    } catch (error) {
+        res.send({
+            status: 401,
+            error: 'Error',
+            message: 'Não foi possível cadastrar o artigo!'
+        })
+    }
 });
 
 router.delete('/articles/delete', (req, res) => {
     var id = req.body.id;
 
-    if (id !== undefined) {
-        if (!isNaN(id)) {
-            Article.destroy({ where: { id: id } })
-                .then(() => {
-                    res.sendStatus(200);
-                })
+    try {
+        if (id !== undefined) {
+            if (!isNaN(id)) {
+                Article.destroy({ where: { id: id } })
+                    .then(() => {
+                        res.status(204).send({});
+                    })
 
+            } else {
+                res.sendStatus(404);
+            }
         } else {
-            console.log('não é um número');
+            res.sendStatus(404);
         }
-
-    } else {
-        console.log('não foi possivel');
+    } catch (error) {
+        res.send({
+            status: 401,
+            error: 'Error',
+            message: 'Não foi possível deletar o artigo!'
+        })
     }
 })
 
 router.get('/categories/:id/articles', (req, res) => {
     var id = req.params.id
 
-    Article.findAll({ where: { categoryId: id } }).then(articles => {
-        res.send(articles);
-    })
+    try {
+        Article.findAll({ where: { categoryId: id } }).then(articles => {
+            res.status(200).send(articles);
+        })
+    } catch (error) {
+        res.send({
+            status: 404,
+            error: 'Error',
+            message: 'Error ao carregar os artigos!'
+        })
+    }
 })
 
 router.get('/articles/:id', (req, res) => {
     var id = req.params.id;
 
-    Article.findByPk(id).then(article => {
-        res.send(article);
-    })
+    try {
+        Article.findByPk(id).then(article => {
+            res.status(200).send(article);
+        })
+    } catch (error) {
+        res.send({
+            status: 404,
+            error: 'Error',
+            message: 'Error ao carregar o artigo!'
+        })
+    }
 })
 
 router.put('/articles/update', (req, res) => {
@@ -79,19 +111,23 @@ router.put('/articles/update', (req, res) => {
     var body = req.body.body;
     var category = req.body.category;
 
-    console.log(id);
-    console.log(title);
-    console.log(body);
-    console.log(category);
-    Article.update({
-        title: title,
-        body: body,
-        categoryId: category,
-        slug: slugify(title)
-    },
-    { where: { id: id } }).then(() => {
-        res.sendStatus(200);
-    })
+    try {
+        Article.update({
+            title: title,
+            body: body,
+            categoryId: category,
+            slug: slugify(title)
+        },
+            { where: { id: id } }).then(() => {
+                res.status(204).send({});
+            })
+    } catch (error) {
+        res.send({
+            status: 401,
+            error: 'Error',
+            message: 'Não foi possível atualizar o artigo!'
+        })
+    }
 })
 
 module.exports = router;
