@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const slugify = require('slugify');
 const Category = require('../categories/Category');
-
+const jwt = require('jsonwebtoken');
 
 router.post('/categories/save', (req, res) => {
     var title = req.body.title;
@@ -26,7 +26,7 @@ router.post('/categories/save', (req, res) => {
     }
 })
 
-router.get('/categories', (req, res) => {
+router.get('/categories', verifyToken, (req, res) => {
     try {
         Category.findAll().then(categories => {
             { categories: categories }
@@ -105,5 +105,28 @@ router.put('/categories/update', (req, res) => {
     }
 })
 
+function verifyToken(req, res, next) {
+    const bearerHeader = req.headers['x-access-token']
+    if (typeof bearerHeader !== 'undefined') {
+        const bearerToken = bearerHeader.split(' ')[1]
+        var decoded = jwt.decode(bearerToken)
+        console.log(decoded);
+        if (decoded.auth === true) {
+            next();
+        } else {
+            res.send({
+                status: 401,
+                error: 'Error',
+                message: 'Token inválido!'
+            })
+        }
+    } else {
+        res.send({
+            status: 401,
+            error: 'Error',
+            message: 'Token inexistente/expirado!'
+        })
+    }
+}
 
 module.exports = router;

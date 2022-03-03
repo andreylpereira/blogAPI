@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 
-router.get("/admin/users", (req, res) => {
+router.get("/admin/users", verifyToken, (req, res) => {
     try {
         User.findAll().then(users => {
             { users: users }
@@ -63,7 +63,7 @@ router.post('/authenticate', async (req, res) => {
             var validate = bcrypt.compareSync(password, user.password);
             if (validate) {
                 var id = user.id;
-                const token = jwt.sign({ id }, secret, {
+                const token = jwt.sign({ id, auth: true }, secret, {
                     expiresIn: 5000
                 });
                 res.send({
@@ -90,5 +90,28 @@ router.post('/authenticate', async (req, res) => {
 
 })
 
+function verifyToken(req, res, next) {
+    const bearerHeader = req.headers['x-access-token']
+    if (typeof bearerHeader !== 'undefined') {
+        const bearerToken = bearerHeader.split(' ')[1]
+        var decoded = jwt.decode(bearerToken)
+        console.log(decoded);
+        if (decoded.auth === true) {
+            next();
+        } else {
+            res.send({
+                status: 401,
+                error: 'Error',
+                message: 'Token inválido!'
+            })
+        }
+    } else {
+        res.send({
+            status: 401,
+            error: 'Error',
+            message: 'Token inexistente/expirado!'
+        })
+    }
+}
 
 module.exports = router;
