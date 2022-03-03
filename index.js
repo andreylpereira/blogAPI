@@ -7,10 +7,14 @@ const connection = require('./database/database');
 //import controlls
 const categoriesController = require('./categories/CategoriesController');
 const articlesController = require('./articles/ArticlesController');
+const usersController = require('./users/UserController');
 
 //import models
 const Article = require('./articles/Article');
 const Category = require('./categories/Category');
+const User = require('./users/User');
+const res = require('express/lib/response');
+
 
 //body-parser
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -19,13 +23,17 @@ app.use(bodyParser.json());
 //database
 connection.authenticate()
     .then(() => {
-        console.log('Conexão com o banco de dados feita com sucesso!');
-    }).catch((err) => {
-        console.log(err);
+        res.status(200);
+        res.send({
+            msg: 'Conexão com o banco de dados feita com sucesso!'
+        })
+    }).catch(() => {
+        res.status(500);
     })
 
 app.use("/", categoriesController);
 app.use("/", articlesController);
+app.use("/", usersController);
 
 app.get('/:slug', (req, res) => {
     var slug = req.params.slug;
@@ -36,7 +44,7 @@ app.get('/:slug', (req, res) => {
             res.status(200).send(article);
 
         } else {
-            res.sendStatus(400);
+            res.status(400);
 
         }
     })

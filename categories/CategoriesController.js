@@ -3,6 +3,7 @@ const router = express.Router();
 const slugify = require('slugify');
 const Category = require('../categories/Category');
 
+
 router.post('/categories/save', (req, res) => {
     var title = req.body.title;
 
@@ -17,7 +18,7 @@ router.post('/categories/save', (req, res) => {
             })
         } catch (error) {
             res.send({
-                status: 401,
+                status: 500,
                 error: 'Error',
                 message: 'Não foi possível cadastrar a categoria!'
             })
@@ -59,7 +60,7 @@ router.delete('/categories/delete', (req, res) => {
         }
     } catch (error) {
         res.send({
-            status: 401,
+            status: 500,
             error: 'Error',
             message: 'Não foi possível deletar a categoria!'
         })
@@ -97,7 +98,7 @@ router.put('/categories/update', (req, res) => {
             })
     } catch (error) {
         res.send({
-            status: 401,
+            status: 500,
             error: 'Error',
             message: 'Não foi possível atualizar a categoria!'
         })
