@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const slugify = require('slugify');
 const Category = require('../categories/Category');
-const jwt = require('jsonwebtoken');
+const verifyToken = require('../users/UserMiddleware')
 
-router.post('/categories/save', (req, res) => {
+router.post('/categories/save', verifyToken, (req, res) => {
     var title = req.body.title;
 
     if (title !== undefined) {
@@ -26,7 +26,7 @@ router.post('/categories/save', (req, res) => {
     }
 })
 
-router.get('/categories', verifyToken, (req, res) => {
+router.get('/categories', (req, res) => {
     try {
         Category.findAll().then(categories => {
             { categories: categories }
@@ -41,7 +41,7 @@ router.get('/categories', verifyToken, (req, res) => {
     }
 });
 
-router.delete('/categories/delete', (req, res) => {
+router.delete('/categories/delete', verifyToken, (req, res) => {
     var id = req.body.id;
 
     try {
@@ -87,7 +87,7 @@ router.get('/categories/:id', (req, res) => {
     }
 })
 
-router.put('/categories/update', (req, res) => {
+router.put('/categories/update', verifyToken, (req, res) => {
     var id = req.body.id;
     var title = req.body.title;
 
@@ -104,29 +104,5 @@ router.put('/categories/update', (req, res) => {
         })
     }
 })
-
-function verifyToken(req, res, next) {
-    const bearerHeader = req.headers['x-access-token']
-    if (typeof bearerHeader !== 'undefined') {
-        const bearerToken = bearerHeader.split(' ')[1]
-        var decoded = jwt.decode(bearerToken)
-        console.log(decoded);
-        if (decoded.auth === true) {
-            next();
-        } else {
-            res.send({
-                status: 401,
-                error: 'Error',
-                message: 'Token inválido!'
-            })
-        }
-    } else {
-        res.send({
-            status: 401,
-            error: 'Error',
-            message: 'Token inexistente/expirado!'
-        })
-    }
-}
 
 module.exports = router;

@@ -3,6 +3,7 @@ const router = express.Router();
 const Category = require('../categories/Category');
 const Article = require('./Article');
 const slugify = require('slugify');
+const verifyToken = require('../users/UserMiddleware')
 
 router.get('/articles', (req, res) => {
     try {
@@ -24,7 +25,7 @@ router.get('/articles', (req, res) => {
     }
 })
 
-router.post('/articles/save', (req, res) => {
+router.post('/articles/save', verifyToken, (req, res) => {
     var title = req.body.title;
     var body = req.body.body;
     var category = req.body.category;
@@ -47,7 +48,7 @@ router.post('/articles/save', (req, res) => {
     }
 });
 
-router.delete('/articles/delete', (req, res) => {
+router.delete('/articles/delete', verifyToken, (req, res) => {
     var id = req.body.id;
 
     try {
@@ -105,7 +106,7 @@ router.get('/articles/:id', (req, res) => {
     }
 })
 
-router.put('/articles/update', (req, res) => {
+router.put('/articles/update', verifyToken, (req, res) => {
     var id = req.body.id;
     var title = req.body.title;
     var body = req.body.body;
