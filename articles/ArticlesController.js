@@ -6,6 +6,9 @@ const slugify = require('slugify');
 
 router.get('/articles', (req, res) => {
     Article.findAll({
+        order: [
+            ['id', 'DESC']
+        ],
         include: [{ model: Category }]
     }).then(articles => {
         { articles: articles }
@@ -52,6 +55,43 @@ router.delete('/articles/delete', (req, res) => {
     } else {
         console.log('não foi possivel');
     }
+})
+
+router.get('/categories/:id/articles', (req, res) => {
+    var id = req.params.id
+
+    Article.findAll({ where: { categoryId: id } }).then(articles => {
+        res.send(articles);
+    })
+})
+
+router.get('/articles/:id', (req, res) => {
+    var id = req.params.id;
+
+    Article.findByPk(id).then(article => {
+        res.send(article);
+    })
+})
+
+router.put('/articles/update', (req, res) => {
+    var id = req.body.id;
+    var title = req.body.title;
+    var body = req.body.body;
+    var category = req.body.category;
+
+    console.log(id);
+    console.log(title);
+    console.log(body);
+    console.log(category);
+    Article.update({
+        title: title,
+        body: body,
+        categoryId: category,
+        slug: slugify(title)
+    },
+    { where: { id: id } }).then(() => {
+        res.sendStatus(200);
+    })
 })
 
 module.exports = router;

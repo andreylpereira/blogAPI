@@ -3,7 +3,6 @@ const router = express.Router();
 const slugify = require('slugify');
 const Category = require('../categories/Category');
 
-
 router.post('/categories/save', (req, res) => {
 
     var title = req.body.title;
@@ -66,5 +65,8 @@ router.put('/categories/update', (req, res) => {
             res.sendStatus(200);
         })
 })
+
+
+
 
 module.exports = router;
