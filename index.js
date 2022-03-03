@@ -18,14 +18,30 @@ app.use(bodyParser.json());
 
 //database
 connection.authenticate()
-.then(() => {
-    console.log('Conexão com o banco de dados feita com sucesso!');
-}).catch((err) => {
-    console.log(err);
-})
+    .then(() => {
+        console.log('Conexão com o banco de dados feita com sucesso!');
+    }).catch((err) => {
+        console.log(err);
+    })
 
 app.use("/", categoriesController);
 app.use("/", articlesController);
+
+app.get('/:slug', (req, res) => {
+    var slug = req.params.slug;
+    Article.findOne({
+        where: { slug: slug }
+    }).then((article) => {
+        if (article !== undefined) {
+            res.status(200).send(article);
+
+        } else {
+            res.sendStatus(400);
+
+        }
+    })
+})
+
 
 app.get('/', (req, res) => res.send('Hello World!'))
 app.listen(port, () => console.log(`Servidor online na porta: ${port}`))

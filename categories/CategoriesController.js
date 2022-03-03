@@ -3,56 +3,86 @@ const router = express.Router();
 const slugify = require('slugify');
 const Category = require('../categories/Category');
 
-
 router.post('/categories/save', (req, res) => {
-
     var title = req.body.title;
-    console.log(title);
+
     if (title !== undefined) {
 
-        Category.create({
-            title: title,
-            slug: slugify(title)
-        }).then(() => {
-            res.sendStatus(200);
-        })
+        try {
+            Category.create({
+                title: title,
+                slug: slugify(title)
+            }).then(() => {
+                res.status(204).send({});
+            })
+        } catch (error) {
+            res.send({
+                status: 401,
+                error: 'Error',
+                message: 'Não foi possível cadastrar a categoria!'
+            })
+        }
     }
 })
 
-router.get('/admin/categories', (req, res) => {
-    Category.findAll().then(categories => {
-        { categories: categories }
-        res.send(categories);
-    })
+router.get('/categories', (req, res) => {
+    try {
+        Category.findAll().then(categories => {
+            { categories: categories }
+            res.status(200).send(categories);
+        })
+    } catch (error) {
+        res.send({
+            status: 404,
+            error: 'Error',
+            message: 'Error ao carregar as categorias!'
+        })
+    }
 });
 
-router.delete('/admin/categories', (req, res) => {
+router.delete('/categories/delete', (req, res) => {
     var id = req.body.id;
 
-    if (id !== undefined) {
-        if (!isNaN(id)) {
-            Category.destroy({ where: { id: id } })
-                .then(() => {
-                    res.sendStatus(200);
-                })
+    try {
+        if (id !== undefined) {
+            if (!isNaN(id)) {
+                Category.destroy({ where: { id: id } })
+                    .then(() => {
+                        res.status(204).send({});
+                    })
+            } else {
+                res.sendStatus(404);
+            }
 
         } else {
-            console.log('não é um número');
+            res.sendStatus(404);
         }
-
-    } else {
-        console.log('não foi possivel');
+    } catch (error) {
+        res.send({
+            status: 401,
+            error: 'Error',
+            message: 'Não foi possível deletar a categoria!'
+        })
     }
 })
 
-router.get('/admin/categories/edit/:id', (req, res) => {
+router.get('/categories/:id', (req, res) => {
     var id = req.params.id;
-    if (isNaN(id)) {
-        Category.findByPk(id).then((categories) => {
-            res.send(categories);
+
+    try {
+        if (!isNaN(id)) {
+            Category.findByPk(id).then((category) => {
+                res.status(200).send(category);
+            })
+        } else {
+            res.sendStatus(404);
+        }
+    } catch (error) {
+        res.send({
+            status: 404,
+            error: 'Error',
+            message: 'Error ao carregar a categoria!'
         })
-    } else {
-        res.sendStatus(404);
     }
 })
 
@@ -60,10 +90,19 @@ router.put('/categories/update', (req, res) => {
     var id = req.body.id;
     var title = req.body.title;
 
-    Category.update({ title: title },
-        { where: { id: id } }).then(() => {
-            res.sendStatus(200);
+    try {
+        Category.update({ title: title, slug: slugify(title) },
+            { where: { id: id } }).then(() => {
+                res.status(204).send({});
+            })
+    } catch (error) {
+        res.send({
+            status: 401,
+            error: 'Error',
+            message: 'Não foi possível atualizar a categoria!'
         })
+    }
 })
+
 
 module.exports = router;
