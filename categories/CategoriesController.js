@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const slugify = require('slugify');
 const Category = require('../categories/Category');
+const verifyToken = require('../users/UserMiddleware')
 
-router.post('/categories/save', (req, res) => {
+router.post('/categories/save', verifyToken, (req, res) => {
     var title = req.body.title;
 
     if (title !== undefined) {
@@ -17,7 +18,7 @@ router.post('/categories/save', (req, res) => {
             })
         } catch (error) {
             res.send({
-                status: 401,
+                status: 500,
                 error: 'Error',
                 message: 'Não foi possível cadastrar a categoria!'
             })
@@ -40,7 +41,7 @@ router.get('/categories', (req, res) => {
     }
 });
 
-router.delete('/categories/delete', (req, res) => {
+router.delete('/categories/delete', verifyToken, (req, res) => {
     var id = req.body.id;
 
     try {
@@ -59,7 +60,7 @@ router.delete('/categories/delete', (req, res) => {
         }
     } catch (error) {
         res.send({
-            status: 401,
+            status: 500,
             error: 'Error',
             message: 'Não foi possível deletar a categoria!'
         })
@@ -86,7 +87,7 @@ router.get('/categories/:id', (req, res) => {
     }
 })
 
-router.put('/categories/update', (req, res) => {
+router.put('/categories/update', verifyToken, (req, res) => {
     var id = req.body.id;
     var title = req.body.title;
 
@@ -97,12 +98,11 @@ router.put('/categories/update', (req, res) => {
             })
     } catch (error) {
         res.send({
-            status: 401,
+            status: 500,
             error: 'Error',
             message: 'Não foi possível atualizar a categoria!'
         })
     }
 })
-
 
 module.exports = router;

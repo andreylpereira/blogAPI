@@ -3,6 +3,7 @@ const router = express.Router();
 const Category = require('../categories/Category');
 const Article = require('./Article');
 const slugify = require('slugify');
+const verifyToken = require('../users/UserMiddleware')
 
 router.get('/articles', (req, res) => {
     try {
@@ -24,7 +25,7 @@ router.get('/articles', (req, res) => {
     }
 })
 
-router.post('/articles/save', (req, res) => {
+router.post('/articles/save', verifyToken, (req, res) => {
     var title = req.body.title;
     var body = req.body.body;
     var category = req.body.category;
@@ -40,14 +41,14 @@ router.post('/articles/save', (req, res) => {
         })
     } catch (error) {
         res.send({
-            status: 401,
+            status: 500,
             error: 'Error',
             message: 'Não foi possível cadastrar o artigo!'
         })
     }
 });
 
-router.delete('/articles/delete', (req, res) => {
+router.delete('/articles/delete', verifyToken, (req, res) => {
     var id = req.body.id;
 
     try {
@@ -66,7 +67,7 @@ router.delete('/articles/delete', (req, res) => {
         }
     } catch (error) {
         res.send({
-            status: 401,
+            status: 500,
             error: 'Error',
             message: 'Não foi possível deletar o artigo!'
         })
@@ -105,7 +106,7 @@ router.get('/articles/:id', (req, res) => {
     }
 })
 
-router.put('/articles/update', (req, res) => {
+router.put('/articles/update', verifyToken, (req, res) => {
     var id = req.body.id;
     var title = req.body.title;
     var body = req.body.body;
@@ -123,9 +124,45 @@ router.put('/articles/update', (req, res) => {
             })
     } catch (error) {
         res.send({
-            status: 401,
+            status: 500,
             error: 'Error',
             message: 'Não foi possível atualizar o artigo!'
+        })
+    }
+})
+
+router.get('/articles/page/:num', (req, res) => {
+    var page = req.params.num;
+    var offset = 0;
+
+    try {
+        if (isNaN(page) || page == 1) {
+            offset = 0
+        } else {
+            offset = (parseInt(page) - 1) * 4;
+        }
+
+        Article.findAndCountAll({ limit: 4, offset: offset }).then(articles => {
+
+            var next;
+            if (offset + 4 >= articles.count) {
+                next = false;
+            } else {
+                next = true;
+            }
+
+            var result = {
+                next: next,
+                articles: articles
+            }
+
+            res.json(result)
+        })
+    } catch (error) {
+        res.send({
+            status: 404,
+            error: 'Error',
+            message: 'Error ao carregar os artigos!'
         })
     }
 })
