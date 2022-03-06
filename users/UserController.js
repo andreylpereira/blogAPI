@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const User = require('./User');
 const bcrypt = require('bcryptjs');
-const verifyToken = require('./UserMiddleware')
+const jwt = require('jsonwebtoken');
+const verifyToken = require('./UserMiddleware');
 
 
 router.get("/admin/users", verifyToken, (req, res) => {
@@ -66,13 +67,13 @@ router.post('/authenticate', async (req, res) => {
                 const token = jwt.sign({ id, auth: true }, secret, {
                     expiresIn: 5000
                 });
-                res.send({
+                res.send(200, {
                     id: id,
                     firstName: user.firstName,
                     lastName: user.lastName,
                     token: token
                 })
-            } else {
+            } else {  
                 res.send({
                     status: 500,
                     error: 'Error',
