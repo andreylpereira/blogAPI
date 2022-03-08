@@ -11,14 +11,14 @@ function verifyToken(req, res, next) {
         } else {
             res.send({
                 status: 401,
-                error: 'Error',
+                title: 'Error',
                 message: 'Token inválido!'
             })
         }
     } else {
         res.send({
             status: 401,
-            error: 'Error',
+            title: 'Error',
             message: 'Token inexistente/expirado!'
         })
     }
