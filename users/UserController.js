@@ -21,7 +21,7 @@ router.get("/admin/users", verifyToken, (req, res) => {
     }
 })
 
-router.post("/users/create", (req, res) => {
+router.post("/admin/create", (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
     var firstName = req.body.firstName;
@@ -62,7 +62,7 @@ router.post("/users/create", (req, res) => {
 
 })
 
-router.post('/authenticate', async (req, res) => {
+router.post('/admin/authenticate', async (req, res) => {
 
     var secret = 'secret123';
     var email = req.body.email;
