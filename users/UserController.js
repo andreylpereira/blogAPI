@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const User = require('./User');
 const bcrypt = require('bcryptjs');
-const verifyToken = require('./UserMiddleware')
+const jwt = require('jsonwebtoken');
+const verifyToken = require('./UserMiddleware');
 
 
 router.get("/admin/users", verifyToken, (req, res) => {
@@ -13,80 +14,98 @@ router.get("/admin/users", verifyToken, (req, res) => {
         })
     } catch (error) {
         res.send({
-            status: 404,
+            status: 500,
             error: 'Error',
-            message: 'Error ao carregar ao listar usuários!'
+            message: 'Não foi possível conectar com o servidor!'
         })
     }
 })
 
-router.post("/users/create", (req, res) => {
+router.post("/admin/create", (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
     var firstName = req.body.firstName;
     var lastName = req.body.lastName;
 
-    User.findOne({ where: { email: email } }).then(user => {
-        if (user == undefined) {
-            var salt = bcrypt.genSaltSync(13);
-            var hash = bcrypt.hashSync(password, salt);
-            try {
-                User.create({ email: email, password: hash, firstName: firstName, lastName: lastName }).then((user) => {
-                    res.status(204).send(user);
-                })
-            } catch (error) {
+    try {
+        User.findOne({ where: { email: email } }).then(user => {
+            if (user == undefined) {
+                var salt = bcrypt.genSaltSync(13);
+                var hash = bcrypt.hashSync(password, salt);
+                try {
+                    User.create({ email: email, password: hash, firstName: firstName, lastName: lastName }).then((user) => {
+                        res.status(204).send(user);
+                    })
+                } catch (error) {
+                    res.send({
+                        status: 500,
+                        error: 'Error',
+                        message: 'Não foi possível cadastrar o usuário!'
+                    })
+                }
+            } else {
                 res.send({
                     status: 500,
                     error: 'Error',
-                    message: 'Não foi possível cadastrar o usuário!'
+                    message: 'Usuário já cadastrado!'
                 })
             }
-        } else {
-            res.send({
-                status: 500,
-                error: 'Error',
-                message: 'Usuário já cadastrado!'
-            })
-        }
-    })
+        })
+    } catch (error) {
+        console.log(error);
+        res.send({
+            status: 500,
+            error: 'Error',
+            message: 'Não foi possível conectar com o servidor!'
+        })
+    }
 
 })
 
-router.post('/authenticate', async (req, res) => {
+router.post('/admin/authenticate', async (req, res) => {
 
     var secret = 'secret123';
     var email = req.body.email;
     var password = req.body.password;
 
-    await User.findOne({ where: { email: email } }).then(user => {
-        if (user != undefined) {
-            var validate = bcrypt.compareSync(password, user.password);
-            if (validate) {
-                var id = user.id;
-                const token = jwt.sign({ id, auth: true }, secret, {
-                    expiresIn: 5000
-                });
-                res.send({
-                    id: id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    token: token
-                })
+    try {
+        await User.findOne({ where: { email: email } }).then(user => {
+            if (user != undefined) {
+                var validate = bcrypt.compareSync(password, user.password);
+                if (validate) {
+                    var id = user.id;
+                    const token = jwt.sign({ id, auth: true }, secret, {
+                        expiresIn: 5000
+                    });
+                    res.send(200, {
+                        id: id,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        token: token
+                    })
+                } else {
+                    res.send({
+                        status: 400,
+                        error: 'Error',
+                        message: 'Senha inválida!'
+                    })
+                }
             } else {
                 res.send({
-                    status: 500,
+                    status: 400,
                     error: 'Error',
-                    message: 'Senha inválida!'
+                    message: 'E-mail inválido!'
                 })
             }
-        } else {
-            res.send({
-                status: 500,
-                error: 'Error',
-                message: 'E-mail inválido!'
-            })
-        }
-    })
+        })
+    } catch (error) {
+        console.log(error);
+        res.send({
+            status: 500,
+            error: 'Error',
+            message: 'Não foi possível conectar com o servidor!'
+        })
+    }
 
 })
 

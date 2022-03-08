@@ -29,13 +29,15 @@ router.post('/articles/save', verifyToken, (req, res) => {
     var title = req.body.title;
     var body = req.body.body;
     var category = req.body.category;
+    var author = req.body.author;
 
     try {
         Article.create({
             title: title,
             slug: slugify(title),
             body: body,
-            categoryId: category
+            categoryId: category,
+            author: author
         }).then(() => {
             res.status(204).send({});
         })
@@ -111,13 +113,15 @@ router.put('/articles/update', verifyToken, (req, res) => {
     var title = req.body.title;
     var body = req.body.body;
     var category = req.body.category;
-
+    var author = req.body.author;
+    
     try {
         Article.update({
             title: title,
             body: body,
             categoryId: category,
-            slug: slugify(title)
+            slug: slugify(title),
+            author: author
         },
             { where: { id: id } }).then(() => {
                 res.status(204).send({});
