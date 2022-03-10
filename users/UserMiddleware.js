@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 function verifyToken(req, res, next) {
-    const bearerHeader = req.headers['x-access-token']
+    const bearerHeader = req.headers['authorization']
     if (typeof bearerHeader !== 'undefined') {
         const bearerToken = bearerHeader.split(' ')[1]
         var decoded = jwt.decode(bearerToken)

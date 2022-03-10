@@ -40,15 +40,15 @@ router.get('/categories', (req, res) => {
     }
 });
 
-router.delete('/categories/delete', verifyToken, (req, res) => {
-    var id = req.body.id;
+router.delete('/admin/categories/:id/delete', verifyToken, (req, res) => {
+    var id = req.params.id;
 
     try {
         if (id !== undefined) {
             if (!isNaN(id)) {
                 Category.destroy({ where: { id: id } })
                     .then(() => {
-                        res.status(200);
+                        res.status(200).send({});
                     })
             } else {
                 res.sendStatus(404);
@@ -86,7 +86,7 @@ router.get('/categories/:id', (req, res) => {
     }
 })
 
-router.put('admin/categories/update', verifyToken, (req, res) => {
+router.put('/admin/categories/update', verifyToken, (req, res) => {
     var id = req.body.id;
     var title = req.body.title;
 
