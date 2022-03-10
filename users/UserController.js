@@ -15,7 +15,7 @@ router.get("/admin/users", verifyToken, (req, res) => {
     } catch (error) {
         res.send({
             status: 500,
-            error: 'Error',
+            title: 'Error',
             message: 'Não foi possível conectar com o servidor!'
         })
     }
@@ -39,14 +39,14 @@ router.post("/admin/create", (req, res) => {
                 } catch (error) {
                     res.send({
                         status: 500,
-                        error: 'Error',
+                        title: 'Error',
                         message: 'Não foi possível cadastrar o usuário!'
                     })
                 }
             } else {
                 res.send({
                     status: 500,
-                    error: 'Error',
+                    title: 'Error',
                     message: 'Usuário já cadastrado!'
                 })
             }
@@ -55,7 +55,7 @@ router.post("/admin/create", (req, res) => {
         console.log(error);
         res.send({
             status: 500,
-            error: 'Error',
+            title: 'Error',
             message: 'Não foi possível conectar com o servidor!'
         })
     }
@@ -86,14 +86,14 @@ router.post('/admin/authenticate', async (req, res) => {
                 } else {
                     res.send({
                         status: 400,
-                        error: 'Error',
+                        title: 'Error',
                         message: 'Senha inválida!'
                     })
                 }
             } else {
                 res.send({
                     status: 400,
-                    error: 'Error',
+                    title: 'Error',
                     message: 'E-mail inválido!'
                 })
             }
@@ -102,7 +102,7 @@ router.post('/admin/authenticate', async (req, res) => {
         console.log(error);
         res.send({
             status: 500,
-            error: 'Error',
+            title: 'Error',
             message: 'Não foi possível conectar com o servidor!'
         })
     }
