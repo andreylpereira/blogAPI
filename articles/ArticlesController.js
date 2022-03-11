@@ -25,7 +25,7 @@ router.get('/articles', (req, res) => {
     }
 })
 
-router.post('/articles/save', verifyToken, (req, res) => {
+router.post('/admin/articles/save', verifyToken, (req, res) => {
     var title = req.body.title;
     var body = req.body.body;
     var category = req.body.category;
@@ -50,15 +50,15 @@ router.post('/articles/save', verifyToken, (req, res) => {
     }
 });
 
-router.delete('/articles/delete', verifyToken, (req, res) => {
-    var id = req.body.id;
+router.delete('/admin/articles/:id/delete', verifyToken, (req, res) => {
+    var id = req.params.id;
 
     try {
         if (id !== undefined) {
             if (!isNaN(id)) {
                 Article.destroy({ where: { id: id } })
                     .then(() => {
-                        res.status(204).send({});
+                        res.status(200).send({});
                     })
 
             } else {
@@ -92,7 +92,7 @@ router.get('/categories/:id/articles', (req, res) => {
     }
 })
 
-router.get('/articles/:id', (req, res) => {
+router.get('/article/:id', (req, res) => {
     var id = req.params.id;
 
     try {
@@ -108,7 +108,7 @@ router.get('/articles/:id', (req, res) => {
     }
 })
 
-router.put('/articles/update', verifyToken, (req, res) => {
+router.put('/admin/articles/update', verifyToken, (req, res) => {
     var id = req.body.id;
     var title = req.body.title;
     var body = req.body.body;
