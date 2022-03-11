@@ -80,7 +80,11 @@ router.get('/categories/:id/articles', (req, res) => {
     var id = req.params.id
 
     try {
-        Article.findAll({ where: { categoryId: id } }).then(articles => {
+        Article.findAll({
+            order: [
+                ['id', 'DESC']
+            ], where: { categoryId: id }
+        }).then(articles => {
             res.status(200).send(articles);
         })
     } catch (error) {
