@@ -93,7 +93,7 @@ router.put('/admin/categories/update', verifyToken, (req, res) => {
     try {
         Category.update({ title: title, slug: slugify(title) },
             { where: { id: id } }).then(() => {
-                res.status(200);
+                res.status(200).send({});
             })
     } catch (error) {
         res.send({

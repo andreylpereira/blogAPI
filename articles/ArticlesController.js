@@ -38,8 +38,8 @@ router.post('/admin/articles/save', verifyToken, (req, res) => {
             body: body,
             categoryId: category,
             author: author
-        }).then(() => {
-            res.status(200);
+        }).then((data) => {
+            res.status(200).send(data);
         })
     } catch (error) {
         res.send({
