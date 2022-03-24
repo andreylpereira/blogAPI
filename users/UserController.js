@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const verifyToken = require('./UserMiddleware');
 
 
-router.get("/admin/users", verifyToken, (req, res) => {
+router.get("/admin/users", (req, res) => {
     try {
         User.findAll().then(users => {
             { users: users }
@@ -34,18 +34,18 @@ router.post("/admin/create", (req, res) => {
                 var hash = bcrypt.hashSync(password, salt);
                 try {
                     User.create({ email: email, password: hash, firstName: firstName, lastName: lastName }).then((user) => {
-                        res.status(204).send(user);
+                        res.status(201).send(user);
                     })
                 } catch (error) {
                     res.send({
-                        status: 500,
+                        status: 400,
                         title: 'Error',
                         message: 'Não foi possível cadastrar o usuário!'
                     })
                 }
             } else {
                 res.send({
-                    status: 500,
+                    status: 400,
                     title: 'Error',
                     message: 'Usuário já cadastrado!'
                 })

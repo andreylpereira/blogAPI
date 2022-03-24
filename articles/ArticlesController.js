@@ -18,7 +18,7 @@ router.get('/articles', (req, res) => {
         })
     } catch (error) {
         res.send({
-            status: 404,
+            status: 500,
             title: 'Error',
             message: 'Error ao carregar os artigos!'
         })
@@ -39,11 +39,11 @@ router.post('/admin/articles/save', verifyToken, (req, res) => {
             categoryId: category,
             author: author
         }).then((data) => {
-            res.status(200).send(data);
+            res.status(201).send(data);
         })
     } catch (error) {
         res.send({
-            status: 500,
+            status: 404,
             title: 'Error',
             message: 'Não foi possível cadastrar o artigo!'
         })
@@ -62,14 +62,22 @@ router.delete('/admin/articles/:id/delete', verifyToken, (req, res) => {
                     })
 
             } else {
-                res.sendStatus(404);
+                res.send({
+                    status: 404,
+                    title: 'Error',
+                    message: 'Artigo não encontrado!'
+                })
             }
         } else {
-            res.sendStatus(404);
+            res.send({
+                status: 404,
+                title: 'Error',
+                message: 'Artigo não encontrado!'
+            })
         }
     } catch (error) {
         res.send({
-            status: 500,
+            status: 404,
             title: 'Error',
             message: 'Não foi possível deletar o artigo!'
         })
@@ -89,7 +97,7 @@ router.get('/categories/:id/articles', (req, res) => {
         })
     } catch (error) {
         res.send({
-            status: 404,
+            status: 500,
             title: 'Error',
             message: 'Error ao carregar os artigos!'
         })
@@ -105,7 +113,7 @@ router.get('/article/:id', (req, res) => {
         })
     } catch (error) {
         res.send({
-            status: 404,
+            status: 500,
             title: 'Error',
             message: 'Error ao carregar o artigo!'
         })
@@ -168,11 +176,30 @@ router.get('/articles/page/:num', (req, res) => {
         })
     } catch (error) {
         res.send({
-            status: 404,
+            status: 500,
             title: 'Error',
             message: 'Error ao carregar os artigos!'
         })
     }
+})
+
+
+router.get('/:slug', (req, res) => {
+    var slug = req.params.slug;
+    Article.findOne({
+        where: { slug: slug }
+    }).then((article) => {
+        if (article !== undefined) {
+            res.status(200).send(article);
+
+        } else {
+            res.send({
+                status: 500,
+                title: 'Error',
+                message: 'Error ao carregar os artigos!'
+            })
+        }
+    })
 })
 
 module.exports = router;

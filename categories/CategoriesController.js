@@ -14,7 +14,7 @@ router.post('/admin/categories/save', verifyToken, (req, res) => {
                 title: title,
                 slug: slugify(title)
             }).then(() => {
-                res.status(200);
+                res.status(201);
             })
         } catch (error) {
             res.send({
@@ -23,6 +23,12 @@ router.post('/admin/categories/save', verifyToken, (req, res) => {
                 message: 'Não foi possível cadastrar a categoria!'
             })
         }
+    } else {
+        res.send({
+            status: 400,
+            title: 'Error',
+            message: 'Cadastro de categoria inválida!'
+        })
     }
 })
 
@@ -33,7 +39,7 @@ router.get('/categories', (req, res) => {
         })
     } catch (error) {
         res.send({
-            status: 404,
+            status: 500,
             title: 'Error',
             message: 'Error ao carregar as categorias!'
         })
@@ -51,15 +57,23 @@ router.delete('/admin/categories/:id/delete', verifyToken, (req, res) => {
                         res.status(200).send({});
                     })
             } else {
-                res.sendStatus(404);
+                res.send({
+                    status: 404,
+                    title: 'Error',
+                    message: 'Categoria não encontrada!'
+                })
             }
 
         } else {
-            res.sendStatus(404);
+            res.send({
+                status: 404,
+                title: 'Error',
+                message: 'Categoria não encontrada!'
+            })
         }
     } catch (error) {
         res.send({
-            status: 500,
+            status: 404,
             title: 'Error',
             message: 'Não foi possível deletar a categoria!'
         })
@@ -75,13 +89,17 @@ router.get('/categories/:id', (req, res) => {
                 res.status(200).send(category);
             })
         } else {
-            res.status(404);
+            res.send({
+                status: 404,
+                title: 'Error',
+                message: 'Categorias não encontrada!'
+            })
         }
     } catch (error) {
         res.send({
-            status: 404,
+            status: 500,
             title: 'Error',
-            message: 'Error ao carregar a categoria!'
+            message: 'Error ao carregar as categorias!'
         })
     }
 })
