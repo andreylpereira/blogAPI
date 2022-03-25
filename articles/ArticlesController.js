@@ -19,8 +19,8 @@ router.get('/articles', (req, res) => {
     } catch (error) {
         res.send({
             status: 500,
-            title: 'Error',
-            message: 'Error ao carregar os artigos!'
+            title: 'Erro!',
+            message: 'Erro ao carregar os artigos.'
         })
     }
 })
@@ -44,8 +44,8 @@ router.post('/admin/articles/save', verifyToken, (req, res) => {
     } catch (error) {
         res.send({
             status: 404,
-            title: 'Error',
-            message: 'Não foi possível cadastrar o artigo!'
+            title: 'Erro!',
+            message: 'Não foi possível cadastrar o artigo.'
         })
     }
 });
@@ -64,22 +64,22 @@ router.delete('/admin/articles/:id/delete', verifyToken, (req, res) => {
             } else {
                 res.send({
                     status: 404,
-                    title: 'Error',
-                    message: 'Artigo não encontrado!'
+                    title: 'Erro!',
+                    message: 'Artigo não encontrado.'
                 })
             }
         } else {
             res.send({
                 status: 404,
-                title: 'Error',
-                message: 'Artigo não encontrado!'
+                title: 'Erro!',
+                message: 'Artigo não encontrado.'
             })
         }
     } catch (error) {
         res.send({
             status: 404,
-            title: 'Error',
-            message: 'Não foi possível deletar o artigo!'
+            title: 'Erro!',
+            message: 'Não foi possível deletar o artigo.'
         })
     }
 })
@@ -98,8 +98,8 @@ router.get('/categories/:id/articles', (req, res) => {
     } catch (error) {
         res.send({
             status: 500,
-            title: 'Error',
-            message: 'Error ao carregar os artigos!'
+            title: 'Erro!',
+            message: 'Erro ao carregar os artigos.'
         })
     }
 })
@@ -114,8 +114,8 @@ router.get('/article/:id', (req, res) => {
     } catch (error) {
         res.send({
             status: 500,
-            title: 'Error',
-            message: 'Error ao carregar o artigo!'
+            title: 'Erro!',
+            message: 'Erro ao carregar o artigo.'
         })
     }
 })
@@ -141,8 +141,8 @@ router.put('/admin/articles/update', verifyToken, (req, res) => {
     } catch (error) {
         res.send({
             status: 500,
-            title: 'Error',
-            message: 'Não foi possível atualizar o artigo!'
+            title: 'Erro!',
+            message: 'Não foi possível atualizar o artigo.'
         })
     }
 })
@@ -177,8 +177,8 @@ router.get('/articles/page/:num', (req, res) => {
     } catch (error) {
         res.send({
             status: 500,
-            title: 'Error',
-            message: 'Error ao carregar os artigos!'
+            title: 'Erro!',
+            message: 'Erro ao carregar os artigos.'
         })
     }
 })
@@ -195,8 +195,8 @@ router.get('/:slug', (req, res) => {
         } else {
             res.send({
                 status: 500,
-                title: 'Error',
-                message: 'Error ao carregar os artigos!'
+                title: 'Erro!',
+                message: 'Erro ao carregar os artigos.'
             })
         }
     })

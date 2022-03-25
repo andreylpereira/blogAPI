@@ -39,14 +39,14 @@ router.post("/admin/create", (req, res) => {
                 } catch (error) {
                     res.send({
                         status: 400,
-                        title: 'Error',
+                        title: 'Erro',
                         message: 'Não foi possível cadastrar o usuário!'
                     })
                 }
             } else {
                 res.send({
                     status: 400,
-                    title: 'Error',
+                    title: 'Erro',
                     message: 'Usuário já cadastrado!'
                 })
             }
@@ -55,7 +55,7 @@ router.post("/admin/create", (req, res) => {
         console.log(error);
         res.send({
             status: 500,
-            title: 'Error',
+            title: 'Erro',
             message: 'Não foi possível conectar com o servidor!'
         })
     }
@@ -81,29 +81,31 @@ router.post('/admin/authenticate', async (req, res) => {
                         id: id,
                         firstName: user.firstName,
                         lastName: user.lastName,
-                        token: token
+                        token: token,
+                        title: 'Sucesso!',
+                        message: 'Login efetuado com sucesso.'
                     })
                 } else {
                     res.send({
                         status: 400,
-                        title: 'Error',
-                        message: 'Senha inválida!'
+                        title: 'Erro!',
+                        message: 'Senha inválida.'
                     })
                 }
             } else {
                 res.send({
                     status: 400,
-                    title: 'Error',
-                    message: 'E-mail inválido!'
+                    title: 'Erro!',
+                    message: 'E-mail inválido.'
                 })
             }
         })
     } catch (error) {
-        console.log(error);
+        console.log('aqui');
         res.send({
             status: 500,
-            title: 'Error',
-            message: 'Não foi possível conectar com o servidor!'
+            title: 'Erro!',
+            message: 'Não foi possível conectar com o servidor.'
         })
     }
 
