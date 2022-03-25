@@ -34,7 +34,10 @@ router.post("/admin/create", (req, res) => {
                 var hash = bcrypt.hashSync(password, salt);
                 try {
                     User.create({ email: email, password: hash, firstName: firstName, lastName: lastName }).then((user) => {
-                        res.status(201).send(user);
+                        res.send(201, {
+                            title: 'Sucesso!',
+                            message: 'Cadastro efetuado com sucesso!'
+                        })
                     })
                 } catch (error) {
                     res.send({
