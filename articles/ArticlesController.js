@@ -39,7 +39,10 @@ router.post('/admin/articles/save', verifyToken, (req, res) => {
             categoryId: category,
             author: author
         }).then((data) => {
-            res.status(201).send(data);
+            res.send(200, {
+                title: 'Sucesso!',
+                message: 'Artigo criado com sucesso.'
+            })
         })
     } catch (error) {
         res.send({
@@ -58,7 +61,10 @@ router.delete('/admin/articles/:id/delete', verifyToken, (req, res) => {
             if (!isNaN(id)) {
                 Article.destroy({ where: { id: id } })
                     .then(() => {
-                        res.status(200).send({});
+                        res.send(200, {
+                            title: 'Sucesso!',
+                            message: 'Artigo deletado com sucesso.'
+                        })
                     })
 
             } else {
@@ -84,27 +90,26 @@ router.delete('/admin/articles/:id/delete', verifyToken, (req, res) => {
     }
 })
 
-router.get('/categories/:id/articles', (req, res) => {
+router.get('/categories/:id/article', (req, res) => {
     var id = req.params.id
 
     try {
-        Article.findAll({
-            order: [
-                ['id', 'DESC']
-            ], where: { categoryId: id }
-        }).then(articles => {
-            res.status(200).send(articles);
+        Article.findByPk(id)
+        .then(article => {
+            res.status(200).send(article);
         })
     } catch (error) {
         res.send({
             status: 500,
             title: 'Erro!',
-            message: 'Erro ao carregar os artigos.'
+            message: 'Erro ao carregar o artigo.'
         })
     }
 })
 
-router.get('/article/:id', (req, res) => {
+
+
+router.get('/articles/:id', (req, res) => {
     var id = req.params.id;
 
     try {
@@ -136,7 +141,10 @@ router.put('/admin/articles/update', verifyToken, (req, res) => {
             author: author
         },
             { where: { id: id } }).then(() => {
-                res.status(200);
+                res.send(200, {
+                    title: 'Sucesso!',
+                    message: 'Artigo atualizado com sucesso.'
+                })
             })
     } catch (error) {
         res.send({

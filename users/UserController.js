@@ -36,21 +36,21 @@ router.post("/admin/create", (req, res) => {
                     User.create({ email: email, password: hash, firstName: firstName, lastName: lastName }).then((user) => {
                         res.send(201, {
                             title: 'Sucesso!',
-                            message: 'Cadastro efetuado com sucesso!'
+                            message: 'Cadastro efetuado com sucesso.'
                         })
                     })
                 } catch (error) {
                     res.send({
                         status: 400,
-                        title: 'Erro',
-                        message: 'Não foi possível cadastrar o usuário!'
+                        title: 'Erro!',
+                        message: 'Não foi possível cadastrar o usuário.'
                     })
                 }
             } else {
                 res.send({
                     status: 400,
-                    title: 'Erro',
-                    message: 'Usuário já cadastrado!'
+                    title: 'Erro!',
+                    message: 'Usuário já cadastrado.'
                 })
             }
         })
@@ -58,8 +58,8 @@ router.post("/admin/create", (req, res) => {
         console.log(error);
         res.send({
             status: 500,
-            title: 'Erro',
-            message: 'Não foi possível conectar com o servidor!'
+            title: 'Erro!',
+            message: 'Não foi possível conectar com o servidor.'
         })
     }
 

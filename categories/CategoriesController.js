@@ -14,7 +14,10 @@ router.post('/admin/categories/save', verifyToken, (req, res) => {
                 title: title,
                 slug: slugify(title)
             }).then(() => {
-                res.status(201);
+                res.send(201, {
+                    title: 'Sucesso!',
+                    message: 'Categoria criada com sucesso.'
+                })
             })
         } catch (error) {
             res.send({
@@ -27,7 +30,7 @@ router.post('/admin/categories/save', verifyToken, (req, res) => {
         res.send({
             status: 400,
             title: 'Erro!',
-            message: 'Cadastro de categoria inválida!'
+            message: 'Cadastro de categoria inválida.'
         })
     }
 })
@@ -54,7 +57,10 @@ router.delete('/admin/categories/:id/delete', verifyToken, (req, res) => {
             if (!isNaN(id)) {
                 Category.destroy({ where: { id: id } })
                     .then(() => {
-                        res.status(200).send({});
+                        res.send(200, {
+                            title: 'Sucesso!',
+                            message: 'Categoria deletada com sucesso.'
+                        })
                     })
             } else {
                 res.send({
@@ -111,13 +117,16 @@ router.put('/admin/categories/update', verifyToken, (req, res) => {
     try {
         Category.update({ title: title, slug: slugify(title) },
             { where: { id: id } }).then(() => {
-                res.status(200).send({});
+                res.send(201, {
+                    title: 'Sucesso!',
+                    message: 'Categoria atualizada efetuado com sucesso.'
+                })
             })
     } catch (error) {
         res.send({
             status: 500,
             title: 'Erro!',
-            message: 'Não foi possível atualizar a categoria!'
+            message: 'Não foi possível atualizar a categoria.'
         })
     }
 })
