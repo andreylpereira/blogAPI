@@ -95,9 +95,9 @@ router.get('/categories/:id/article', (req, res) => {
 
     try {
         Article.findByPk(id)
-        .then(article => {
-            res.status(200).send(article);
-        })
+            .then(article => {
+                res.status(200).send(article);
+            })
     } catch (error) {
         res.send({
             status: 500,
@@ -191,6 +191,27 @@ router.get('/articles/page/:num', (req, res) => {
     }
 })
 
+
+router.get('/categories/:categoryId/articles', (req, res) => {
+    var categoryId = req.params.categoryId;
+    Article.findAll({
+        order: [
+            ['id', 'DESC']
+        ],
+        where: { categoryId: categoryId }
+    }).then((article) => {
+        if (article !== undefined) {
+            res.status(200).send(article);
+
+        } else {
+            res.send({
+                status: 500,
+                title: 'Erro!',
+                message: 'Erro ao carregar os artigos.'
+            })
+        }
+    })
+})
 
 router.get('/:slug', (req, res) => {
     var slug = req.params.slug;
