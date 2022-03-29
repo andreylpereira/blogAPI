@@ -18,9 +18,9 @@ router.get('/articles', (req, res) => {
         })
     } catch (error) {
         res.send({
-            status: 404,
-            title: 'Error',
-            message: 'Error ao carregar os artigos!'
+            status: 500,
+            title: 'Erro!',
+            message: 'Erro ao carregar os artigos.'
         })
     }
 })
@@ -38,14 +38,17 @@ router.post('/admin/articles/save', verifyToken, (req, res) => {
             body: body,
             categoryId: category,
             author: author
-        }).then(() => {
-            res.status(200);
+        }).then((data) => {
+            res.send(200, {
+                title: 'Sucesso!',
+                message: 'Artigo criado com sucesso.'
+            })
         })
     } catch (error) {
         res.send({
-            status: 500,
-            title: 'Error',
-            message: 'Não foi possível cadastrar o artigo!'
+            status: 404,
+            title: 'Erro!',
+            message: 'Não foi possível cadastrar o artigo.'
         })
     }
 });
@@ -58,45 +61,55 @@ router.delete('/admin/articles/:id/delete', verifyToken, (req, res) => {
             if (!isNaN(id)) {
                 Article.destroy({ where: { id: id } })
                     .then(() => {
-                        res.status(200).send({});
+                        res.send(200, {
+                            title: 'Sucesso!',
+                            message: 'Artigo deletado com sucesso.'
+                        })
                     })
 
             } else {
-                res.sendStatus(404);
+                res.send({
+                    status: 404,
+                    title: 'Erro!',
+                    message: 'Artigo não encontrado.'
+                })
             }
         } else {
-            res.sendStatus(404);
+            res.send({
+                status: 404,
+                title: 'Erro!',
+                message: 'Artigo não encontrado.'
+            })
         }
     } catch (error) {
         res.send({
-            status: 500,
-            title: 'Error',
-            message: 'Não foi possível deletar o artigo!'
+            status: 404,
+            title: 'Erro!',
+            message: 'Não foi possível deletar o artigo.'
         })
     }
 })
 
-router.get('/categories/:id/articles', (req, res) => {
+router.get('/categories/:id/article', (req, res) => {
     var id = req.params.id
 
     try {
-        Article.findAll({
-            order: [
-                ['id', 'DESC']
-            ], where: { categoryId: id }
-        }).then(articles => {
-            res.status(200).send(articles);
-        })
+        Article.findByPk(id)
+            .then(article => {
+                res.status(200).send(article);
+            })
     } catch (error) {
         res.send({
-            status: 404,
-            title: 'Error',
-            message: 'Error ao carregar os artigos!'
+            status: 500,
+            title: 'Erro!',
+            message: 'Erro ao carregar o artigo.'
         })
     }
 })
 
-router.get('/article/:id', (req, res) => {
+
+
+router.get('/articles/:id', (req, res) => {
     var id = req.params.id;
 
     try {
@@ -105,9 +118,9 @@ router.get('/article/:id', (req, res) => {
         })
     } catch (error) {
         res.send({
-            status: 404,
-            title: 'Error',
-            message: 'Error ao carregar o artigo!'
+            status: 500,
+            title: 'Erro!',
+            message: 'Erro ao carregar o artigo.'
         })
     }
 })
@@ -128,13 +141,16 @@ router.put('/admin/articles/update', verifyToken, (req, res) => {
             author: author
         },
             { where: { id: id } }).then(() => {
-                res.status(200);
+                res.send(200, {
+                    title: 'Sucesso!',
+                    message: 'Artigo atualizado com sucesso.'
+                })
             })
     } catch (error) {
         res.send({
             status: 500,
-            title: 'Error',
-            message: 'Não foi possível atualizar o artigo!'
+            title: 'Erro!',
+            message: 'Não foi possível atualizar o artigo.'
         })
     }
 })
@@ -168,11 +184,51 @@ router.get('/articles/page/:num', (req, res) => {
         })
     } catch (error) {
         res.send({
-            status: 404,
-            title: 'Error',
-            message: 'Error ao carregar os artigos!'
+            status: 500,
+            title: 'Erro!',
+            message: 'Erro ao carregar os artigos.'
         })
     }
+})
+
+
+router.get('/categories/:categoryId/articles', (req, res) => {
+    var categoryId = req.params.categoryId;
+    Article.findAll({
+        order: [
+            ['id', 'DESC']
+        ],
+        where: { categoryId: categoryId }
+    }).then((article) => {
+        if (article !== undefined) {
+            res.status(200).send(article);
+
+        } else {
+            res.send({
+                status: 500,
+                title: 'Erro!',
+                message: 'Erro ao carregar os artigos.'
+            })
+        }
+    })
+})
+
+router.get('/:slug', (req, res) => {
+    var slug = req.params.slug;
+    Article.findOne({
+        where: { slug: slug }
+    }).then((article) => {
+        if (article !== undefined) {
+            res.status(200).send(article);
+
+        } else {
+            res.send({
+                status: 500,
+                title: 'Erro!',
+                message: 'Erro ao carregar os artigos.'
+            })
+        }
+    })
 })
 
 module.exports = router;

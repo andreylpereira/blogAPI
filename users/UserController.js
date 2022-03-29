@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const verifyToken = require('./UserMiddleware');
 
 
-router.get("/admin/users", verifyToken, (req, res) => {
+router.get("/admin/users", (req, res) => {
     try {
         User.findAll().then(users => {
             { users: users }
@@ -34,20 +34,23 @@ router.post("/admin/create", (req, res) => {
                 var hash = bcrypt.hashSync(password, salt);
                 try {
                     User.create({ email: email, password: hash, firstName: firstName, lastName: lastName }).then((user) => {
-                        res.status(204).send(user);
+                        res.send(201, {
+                            title: 'Sucesso!',
+                            message: 'Cadastro efetuado com sucesso.'
+                        })
                     })
                 } catch (error) {
                     res.send({
-                        status: 500,
-                        title: 'Error',
-                        message: 'Não foi possível cadastrar o usuário!'
+                        status: 400,
+                        title: 'Erro!',
+                        message: 'Não foi possível cadastrar o usuário.'
                     })
                 }
             } else {
                 res.send({
-                    status: 500,
-                    title: 'Error',
-                    message: 'Usuário já cadastrado!'
+                    status: 400,
+                    title: 'Erro!',
+                    message: 'Usuário já cadastrado.'
                 })
             }
         })
@@ -55,8 +58,8 @@ router.post("/admin/create", (req, res) => {
         console.log(error);
         res.send({
             status: 500,
-            title: 'Error',
-            message: 'Não foi possível conectar com o servidor!'
+            title: 'Erro!',
+            message: 'Não foi possível conectar com o servidor.'
         })
     }
 
@@ -81,29 +84,31 @@ router.post('/admin/authenticate', async (req, res) => {
                         id: id,
                         firstName: user.firstName,
                         lastName: user.lastName,
-                        token: token
+                        token: token,
+                        title: 'Sucesso!',
+                        message: 'Login efetuado com sucesso.'
                     })
                 } else {
                     res.send({
                         status: 400,
-                        title: 'Error',
-                        message: 'Senha inválida!'
+                        title: 'Erro!',
+                        message: 'Senha inválida.'
                     })
                 }
             } else {
                 res.send({
                     status: 400,
-                    title: 'Error',
-                    message: 'E-mail inválido!'
+                    title: 'Erro!',
+                    message: 'E-mail inválido.'
                 })
             }
         })
     } catch (error) {
-        console.log(error);
+        console.log('aqui');
         res.send({
             status: 500,
-            title: 'Error',
-            message: 'Não foi possível conectar com o servidor!'
+            title: 'Erro!',
+            message: 'Não foi possível conectar com o servidor.'
         })
     }
 
